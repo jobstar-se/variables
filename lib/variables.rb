@@ -20,9 +20,9 @@ ActiveSupport.on_load(:active_record) do
 
         record = find_by_name(name)
         if record
-          record.update_attribute(:name, [value].to_json)
+          record.update_attribute(:value, [value].to_json)
         else
-          create(:name => [value].to_json)
+          create(:name => name, :value => [value].to_json)
         end
       end
     
