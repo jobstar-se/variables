@@ -27,7 +27,9 @@ ActiveSupport.on_load(:active_record) do
       end
     
       def self.get(name)
-        ActiveSupport::JSON.decode(find_by_name(name).value).first
+        record = find_by_name(name)
+        return nil unless record
+        ActiveSupport::JSON.decode(record.value).first
       end
 
     end
