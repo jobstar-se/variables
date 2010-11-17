@@ -1,20 +1,30 @@
-module Variable 
+class Variable < ActiveRecord
 
-  DIR = File.join(Rails.root, 'tmp', 'variables')
-
-  def set(name, value)
-    File.open(File.join(DIR, name), 'w') { |f| 
-      f.flock File::LOCK_EX
-      f.write [value].to_json 
-    }
+  def self.set(name, value)
+    update_all({ :name => name }, { :value => [value].to_json })
   end
 
-  def get(name)
-    value = nil
-    File.open(File.join(DIR, name), 'r') { |f| 
-      value = ActiveSupport::JSON.decode(f.read).first 
-    }
-    value
+  def self.get(name)
+    ActiveSupport::JSON.decode(find_by_name(name)).first
   end
 
+end
+
+ActiveSupport.on_load(:active_record) do 
+#  unless Object.const_defined? 'Variable'
+#    klass = Class.new(ActiveRecord::Base) do
+#      set_table_name 'variables'
+#    end
+#    Object.const_set 'Variable', klass
+#  end
+
+  unless Variable.table_exists? 
+    ActiveRecord::Schema.define do 
+      create_table :variables do |t| 
+        t.string :name 
+        t.text   :value
+        t.timestamps
+      end
+    end 
+  end 
 end
