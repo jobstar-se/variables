@@ -4,7 +4,7 @@ require "variables/version"
 
 Gem::Specification.new do |s|
   s.name        = "variables"
-  s.version     = Variable::VERSION
+  s.version     = Variables::VERSION
   s.platform    = Gem::Platform::RUBY
   s.authors     = ["Peder Linder"]
   s.email       = ["pederbl@jobstar.se"]
