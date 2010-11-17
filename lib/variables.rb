@@ -8,7 +8,22 @@ ActiveSupport.on_load(:active_record) do
       set_table_name 'variables'
 
       def self.set(name, value)
-        update_all({ :name => name }, { :value => [value].to_json })
+        unless Variable.table_exists? 
+          ActiveRecord::Schema.define do 
+            create_table :variables do |t| 
+              t.string :name 
+              t.text   :value
+              t.timestamps
+            end
+          end 
+        end 
+
+        record = find_by_name(name)
+        if record
+          record.update_attribute(:name, [value].to_json)
+        else
+          create(:name => [value].to_json)
+        end
       end
     
       def self.get(name)
@@ -19,13 +34,4 @@ ActiveSupport.on_load(:active_record) do
     Object.const_set 'Variable', klass
   end
 
-  unless Variable.table_exists? 
-    ActiveRecord::Schema.define do 
-      create_table :variables do |t| 
-        t.string :name 
-        t.text   :value
-        t.timestamps
-      end
-    end 
-  end 
 end
