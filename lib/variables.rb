@@ -8,16 +8,6 @@ ActiveSupport.on_load(:active_record) do
       set_table_name 'variables'
 
       def self.set(name, value)
-        unless Variable.table_exists? 
-          ActiveRecord::Schema.define do 
-            create_table :variables do |t| 
-              t.string :name 
-              t.text   :value
-              t.timestamps
-            end
-          end 
-        end 
-
         record = find_by_name(name)
         if record
           record.update_attribute(:value, [value].to_json)
@@ -34,6 +24,15 @@ ActiveSupport.on_load(:active_record) do
 
     end
     Object.const_set 'Variable', klass
-  end
 
+    unless Variable.table_exists? 
+      ActiveRecord::Schema.define do 
+        create_table :variables do |t| 
+          t.string :name 
+          t.text   :value
+          t.timestamps
+        end
+      end 
+    end 
+  end
 end
